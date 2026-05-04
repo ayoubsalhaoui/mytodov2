@@ -440,7 +440,7 @@ html,body{overflow-x:hidden;max-width:100vw}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* ── RESPONSIVE: Tablet ── */
-@media(max-width:1024px){
+@media(min-width:769px) and (max-width:1024px){
   .sidebar{width:200px}
   .main{margin-left:200px}
   .kpi-row{grid-template-columns:repeat(3,1fr)}
@@ -485,18 +485,17 @@ html,body{overflow-x:hidden;max-width:100vw}
   .task-meta{gap:6px;font-size:.71rem}
 
   /* ── Tâches mobile : 2 lignes claires, toutes infos visibles ── */
-  /* !important nécessaire car les règles desktop sont définies plus bas dans le CSS */
-  .tasks-th{display:none !important}
+  .tasks-th{display:none}
   .task-tr{
-    display:grid !important;
-    grid-template-columns:5px 28px 1fr !important;
-    gap:0 10px !important;
-    padding:12px 14px !important;
-    align-items:flex-start !important;
+    display:grid;
+    grid-template-columns:5px 28px 1fr;
+    gap:0 10px;
+    padding:12px 14px;
+    align-items:flex-start;
   }
   .ttr-color{
-    width:5px !important;border-radius:99px;
-    align-self:stretch;min-height:52px;height:auto !important;
+    width:5px;border-radius:99px;
+    align-self:stretch;min-height:52px;height:auto;
   }
   .ttr-check{
     width:24px;height:24px;flex-shrink:0;
@@ -507,11 +506,11 @@ html,body{overflow-x:hidden;max-width:100vw}
   /* Ligne 1 : nom complet, wrap autorisé */
   .ttr-name{
     font-size:.9rem;font-weight:600;
-    white-space:normal !important;
+    white-space:normal;
     line-height:1.3;
     margin-bottom:6px;
-    overflow:visible !important;
-    text-overflow:clip !important;
+    overflow:visible;
+    text-overflow:clip;
   }
 
   /* Ligne 2 : infos compactes en flex-wrap */
@@ -539,16 +538,13 @@ html,body{overflow-x:hidden;max-width:100vw}
   .ttr-dl-inline.normal{color:var(--ink3)}
 
   /* Avatar inline visible sur mobile */
-  .ttr-av-inline{display:inline-flex !important}
+  .ttr-av-inline{display:inline-flex}
 
   /* Priorité inline visible sur mobile */
-  .ttr-pri-inline{display:inline-flex !important}
+  .ttr-pri-inline{display:inline-flex}
 
-  /* Colonnes desktop cachées sur mobile */
-  .ttr-assignee{display:none !important}
-  .ttr-priority{display:none !important}
-  .ttr-deadline{display:none !important}
-  .ttr-actions{display:none !important}
+  /* Colonnes desktop cachées sur mobile (mais elles ne s'appliquent déjà pas grâce au min-width:769px) */
+  .ttr-assignee,.ttr-priority,.ttr-deadline,.ttr-actions{display:none}
 
   /* ── Filtres mobile : recherche ligne 1, selects ligne 2 compacte ── */
   .toolbar{padding:8px 10px;gap:5px;flex-wrap:wrap}
@@ -629,21 +625,32 @@ html,body{overflow-x:hidden;max-width:100vw}
 .proj-cat-icon.xs svg{width:12px;height:12px;stroke-width:2.4}
 
 /* ── STRUCTURED TASK LIST (columns, like an invisible table) ── */
+/* Wrap desktop ds une media query min-width pour ne PAS s'appliquer sur mobile */
 .tasks-table{display:flex;flex-direction:column}
-.tasks-th{
-  display:grid;
-  grid-template-columns:24px 22px 1fr 130px 90px 100px 60px;
-  gap:12px;align-items:center;
-  padding:8px 18px;
-  font-size:.65rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);
-  background:var(--bg);border-bottom:1px solid var(--border);
+
+@media(min-width:769px){
+  .tasks-th{
+    display:grid;
+    grid-template-columns:24px 22px 1fr 130px 90px 100px 60px;
+    gap:12px;align-items:center;
+    padding:8px 18px;
+    font-size:.65rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);
+    background:var(--bg);border-bottom:1px solid var(--border);
+  }
+  .tasks-th .th-actions{text-align:right}
+  .task-tr{
+    display:grid;
+    grid-template-columns:24px 22px 1fr 130px 90px 100px 60px;
+    gap:12px;align-items:center;
+    padding:13px 18px;
+    border-bottom:1px solid var(--border);
+    cursor:pointer;transition:background var(--dur);
+    position:relative;
+  }
 }
-.tasks-th .th-actions{text-align:right}
+
+/* Règles communes (toutes tailles) */
 .task-tr{
-  display:grid;
-  grid-template-columns:24px 22px 1fr 130px 90px 100px 60px;
-  gap:12px;align-items:center;
-  padding:13px 18px;
   border-bottom:1px solid var(--border);
   cursor:pointer;transition:background var(--dur);
   position:relative;
