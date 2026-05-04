@@ -484,49 +484,63 @@ html,body{overflow-x:hidden;max-width:100vw}
   .task-name{font-size:.9rem}
   .task-meta{gap:6px;font-size:.71rem}
 
-  /* ── Tâches mobile : layout propre 3 colonnes ── */
+  /* ── Tâches mobile : 2 lignes claires, toutes infos visibles ── */
   .tasks-th{display:none}
   .task-tr{
     display:grid;
     grid-template-columns:5px 28px 1fr;
     gap:0 10px;
-    padding:11px 14px;
-    align-items:center;
+    padding:12px 14px;
+    align-items:flex-start;
   }
   .ttr-color{
     width:5px;border-radius:99px;
-    align-self:stretch;min-height:44px;height:auto;
+    align-self:stretch;min-height:52px;height:auto;
   }
-  .ttr-check{width:24px;height:24px;flex-shrink:0;align-self:flex-start;margin-top:2px}
+  .ttr-check{
+    width:24px;height:24px;flex-shrink:0;
+    align-self:flex-start;margin-top:1px;
+  }
   .ttr-main{grid-column:3/4;min-width:0}
+
+  /* Ligne 1 : nom complet, wrap autorisé */
   .ttr-name{
-    font-size:.88rem;font-weight:600;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    margin-bottom:5px;
+    font-size:.9rem;font-weight:600;
+    white-space:normal;
+    line-height:1.3;
+    margin-bottom:6px;
   }
-  /* Sous-ligne mobile : tout sur une ligne, pas de retour */
+
+  /* Ligne 2 : infos compactes en flex-wrap */
   .ttr-sub{
     display:flex;align-items:center;
-    gap:5px;flex-wrap:nowrap;overflow:hidden;
+    gap:5px;flex-wrap:wrap;
   }
-  .ttr-proj{
-    flex-shrink:1;min-width:0;max-width:120px;
-  }
+
+  /* Projet chip : pas de troncature sur mobile */
+  .ttr-proj{flex-shrink:0;max-width:none}
   .ttr-proj-name{
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    max-width:80px;
+    white-space:nowrap;
+    overflow:visible;text-overflow:clip;
+    max-width:none;
   }
+
   /* Deadline inline dans la sous-ligne sur mobile */
   .ttr-dl-inline{
     display:inline-flex;align-items:center;gap:3px;
-    font-size:.7rem;font-weight:600;white-space:nowrap;flex-shrink:0;
+    font-size:.71rem;font-weight:600;white-space:nowrap;flex-shrink:0;
   }
   .ttr-dl-inline svg{width:10px;height:10px;stroke:currentColor;stroke-width:2;fill:none}
   .ttr-dl-inline.overdue{color:var(--rose)}
   .ttr-dl-inline.soon{color:var(--amber)}
   .ttr-dl-inline.normal{color:var(--ink3)}
+
   /* Avatar inline visible sur mobile */
   .ttr-av-inline{display:inline-flex}
+
+  /* Priorité inline visible sur mobile */
+  .ttr-pri-inline{display:inline-flex}
+
   /* Colonnes desktop cachées sur mobile */
   .ttr-assignee{display:none}
   .ttr-priority{display:none}
@@ -568,6 +582,7 @@ html,body{overflow-x:hidden;max-width:100vw}
   .set-row{padding:14px}
   .notif-item{padding:12px 14px}
   .card-hd{padding:12px 14px}
+  .mobile-only{display:inline-flex}
 
   .login-card{padding:28px 22px}
   .login-h{font-size:1.5rem}
@@ -579,8 +594,10 @@ html,body{overflow-x:hidden;max-width:100vw}
   .kpi-val{font-size:1.4rem}
 }
 
-/* === Hidden utility === */
+/* Hidden utility */
 .hidden{display:none!important}
+/* Mobile only : caché sur desktop, visible sur mobile */
+.mobile-only{display:none}
 
 /* ── PROJECT CATEGORY GRID (modal) ── */
 .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
@@ -708,6 +725,8 @@ html,body{overflow-x:hidden;max-width:100vw}
   color:white;font-weight:700;font-size:.58rem;
   border:1.5px solid var(--white);box-shadow:0 0 0 1px var(--border);
 }
+/* Priorité inline (mobile uniquement) */
+.ttr-pri-inline{display:none}
 </style>
 </head>
 <body>
@@ -1056,6 +1075,10 @@ html,body{overflow-x:hidden;max-width:100vw}
       <div class="card">
         <div class="card-hd">
           <div class="card-t" id="admin-count">— membres</div>
+          <button class="btn btn-red btn-sm mobile-only" onclick="openMemberModal()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            Nouveau membre
+          </button>
         </div>
         <div id="admin-list" class="member-list" style="border-radius:0;border:none"></div>
       </div>
@@ -1837,17 +1860,15 @@ function gp(page) {
   const main = document.querySelector('.main');
   if (main) main.scrollTo({top:0,behavior:'instant'});
 
-  // FAB : visible sur accueil, all-tasks et projects uniquement
+  // FAB : visible sur accueil, all-tasks, projects et admin
   const fab = document.getElementById('fab');
   if (fab) {
-    const fabPages = ['dashboard','all-tasks','projects'];
+    const fabPages = ['dashboard','all-tasks','projects','admin'];
     fab.classList.toggle('fab-visible', fabPages.includes(page));
-    // Action du FAB selon la page
-    fab.onclick = page === 'projects'
-      ? () => openProjectModal()
-      : page === 'all-tasks'
-        ? () => openTaskModal()
-        : () => openTaskModal({preselectPersonal:true}); // dashboard
+    if (page === 'projects') fab.onclick = () => openProjectModal();
+    else if (page === 'all-tasks') fab.onclick = () => openTaskModal();
+    else if (page === 'admin') fab.onclick = () => openMemberModal();
+    else fab.onclick = () => openTaskModal({preselectPersonal:true});
   }
 
   // Render
@@ -2046,6 +2067,9 @@ function renderTaskTr(t) {
 
   // Petit avatar assigné dans la sous-ligne (mobile uniquement)
   const avInline = a ? `<span class="ttr-av-inline" style="background:${a.color}" title="${escapeHtml(a.name)}">${userInitials(a)}</span>` : '';
+
+  // Priorité inline (mobile uniquement — high et med seulement pour ne pas surcharger)
+  const priInline = t.priority !== 'low' ? `<span class="ttr-pri-inline badge ${priorityClass(t.priority)}">${priorityLabel(t.priority)}</span>` : '';
   const commentsCount = (t.comments || []).length;
 
   // Cellule responsable
@@ -2077,6 +2101,7 @@ function renderTaskTr(t) {
       <div class="ttr-sub">
         ${projCell}
         <span class="badge ${statusClass(t.status)}">${statusLabel(t.status)}</span>
+        ${priInline}
         ${avInline}
         ${dlInline}
       </div>
