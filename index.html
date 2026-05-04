@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -491,7 +490,12 @@ html,body{overflow-x:hidden;max-width:100vw}
     width:24px;height:24px;flex-shrink:0;
     align-self:flex-start;margin-top:2px;
   }
-  .ttr-main{grid-column:3/4;min-width:0;display:flex;flex-direction:column;gap:8px}
+  .ttr-main{
+    grid-column:3/4;min-width:0;
+    display:flex;flex-direction:column;gap:8px;
+    text-align:left;
+    align-items:stretch;
+  }
 
   /* Ligne 1 : titre complet */
   .ttr-name{
@@ -509,19 +513,24 @@ html,body{overflow-x:hidden;max-width:100vw}
     display:flex;flex-direction:column;
     gap:6px;
     align-items:stretch;
+    justify-content:flex-start;
   }
 
   /* Ligne 2 : projet + statut */
   .ttr-row-1{
     display:flex;align-items:center;
+    justify-content:flex-start;
     gap:6px;flex-wrap:wrap;
     min-width:0;
+    width:100%;
   }
   /* Ligne 3 : responsable + priorité + deadline */
   .ttr-row-2{
     display:flex;align-items:center;
+    justify-content:flex-start;
     gap:8px;flex-wrap:wrap;
     min-width:0;
+    width:100%;
   }
   /* Sur mobile, les éléments de row-2 sont visibles */
   .ttr-row-2 .ttr-pri-inline,
@@ -644,8 +653,20 @@ html,body{overflow-x:hidden;max-width:100vw}
 .proj-cat-icon.xs svg{width:12px;height:12px;stroke-width:2.4}
 
 /* ── STRUCTURED TASK LIST (columns, like an invisible table) ── */
-/* Wrap desktop ds une media query min-width pour ne PAS s'appliquer sur mobile */
+/* TOUS les styles desktop des task rows sont scopés en (min-width:769px)
+   pour ne JAMAIS écraser les styles mobile */
 .tasks-table{display:flex;flex-direction:column}
+
+/* Règles communes (toutes tailles) */
+.task-tr{
+  border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background var(--dur);
+  position:relative;
+}
+.task-tr:last-child{border-bottom:none}
+.task-tr:hover{background:#FAFAFA}
+.task-tr.done{opacity:.55}
+.task-tr.done .ttr-name{text-decoration:line-through;color:var(--ink3)}
 
 @media(min-width:769px){
   .tasks-th{
@@ -662,50 +683,39 @@ html,body{overflow-x:hidden;max-width:100vw}
     grid-template-columns:24px 22px 1fr 130px 90px 100px 60px;
     gap:12px;align-items:center;
     padding:13px 18px;
-    border-bottom:1px solid var(--border);
-    cursor:pointer;transition:background var(--dur);
-    position:relative;
   }
-}
 
-/* Règles communes (toutes tailles) */
-.task-tr{
-  border-bottom:1px solid var(--border);
-  cursor:pointer;transition:background var(--dur);
-  position:relative;
-}
-.task-tr:last-child{border-bottom:none}
-.task-tr:hover{background:#FAFAFA}
-.task-tr.done{opacity:.55}
-.task-tr.done .ttr-name{text-decoration:line-through;color:var(--ink3)}
+  .ttr-color{width:4px;height:32px;border-radius:99px;background:var(--red)}
+  .ttr-check{
+    width:22px;height:22px;border-radius:6px;border:1.8px solid var(--border2);
+    background:var(--white);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all var(--dur);
+  }
+  .ttr-check:hover{border-color:var(--red)}
+  .ttr-check.checked{background:var(--green);border-color:var(--green)}
+  .ttr-check.checked svg{stroke:white;width:13px;height:13px;stroke-width:3;fill:none}
+  .ttr-check svg{width:0;height:0}
 
-.ttr-color{width:4px;height:32px;border-radius:99px;background:var(--red)}
-.ttr-check{
-  width:22px;height:22px;border-radius:6px;border:1.8px solid var(--border2);
-  background:var(--white);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all var(--dur);
+  .ttr-main{min-width:0}
+  .ttr-name{
+    font-size:.92rem;font-weight:600;color:var(--ink);line-height:1.35;
+    margin-bottom:3px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .ttr-sub{
+    display:flex;align-items:center;gap:7px;
+    font-size:.72rem;color:var(--ink3);
+    flex-wrap:wrap;
+  }
+  /* Sur desktop : ttr-row-1 et ttr-row-2 sont juste des wrappers inline */
+  .ttr-row-1,.ttr-row-2{
+    display:inline-flex;align-items:center;gap:7px;
+    flex-wrap:wrap;
+  }
+  .ttr-row-2 .ttr-pri-inline,
+  .ttr-row-2 .ttr-av-pill,
+  .ttr-row-2 .ttr-dl-inline{display:none}
 }
-.ttr-check:hover{border-color:var(--red)}
-.ttr-check.checked{background:var(--green);border-color:var(--green)}
-.ttr-check.checked svg{stroke:white;width:13px;height:13px;stroke-width:3;fill:none}
-.ttr-check svg{width:0;height:0}
-
-.ttr-main{min-width:0}
-.ttr-name{
-  font-size:.92rem;font-weight:600;color:var(--ink);line-height:1.35;
-  margin-bottom:3px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.ttr-sub{
-  display:flex;align-items:center;gap:7px;
-  font-size:.72rem;color:var(--ink3);
-}
-/* Sur desktop : row-1 et row-2 (utilisés sur mobile) deviennent invisibles
-   en tant que conteneurs et leur contenu est aligné inline */
-.ttr-row-1,.ttr-row-2{display:contents}
-.ttr-row-2 .ttr-pri-inline,
-.ttr-row-2 .ttr-av-pill,
-.ttr-row-2 .ttr-dl-inline{display:none}
 .ttr-proj{
   display:inline-flex;align-items:center;gap:5px;
   padding:2px 8px 2px 4px;border-radius:99px;
