@@ -484,30 +484,75 @@ html,body{overflow-x:hidden;max-width:100vw}
   .task-name{font-size:.9rem}
   .task-meta{gap:6px;font-size:.71rem}
 
-  .toolbar{padding:10px 12px;gap:6px}
-  .sbox{min-width:0;flex:1 1 100%;order:-1}
-  .fsel{font-size:.8rem;padding:7px 22px 7px 9px}
-
-  /* Structured task list — mobile : on cache colonnes responsable & priorité,
-     on garde nom/projet/échéance dans une grille 3 colonnes claire */
+  /* ── Tâches mobile : layout propre 3 colonnes ── */
   .tasks-th{display:none}
   .task-tr{
-    grid-template-columns:18px 22px 1fr auto;
-    gap:10px;padding:12px 14px;
-    align-items:flex-start;
+    display:grid;
+    grid-template-columns:5px 28px 1fr;
+    gap:0 10px;
+    padding:11px 14px;
+    align-items:center;
   }
-  .ttr-color{height:42px;width:3px}
-  .ttr-check{margin-top:1px}
+  .ttr-color{
+    width:5px;border-radius:99px;
+    align-self:stretch;min-height:44px;height:auto;
+  }
+  .ttr-check{width:24px;height:24px;flex-shrink:0;align-self:flex-start;margin-top:2px}
   .ttr-main{grid-column:3/4;min-width:0}
-  .ttr-name{font-size:.88rem;white-space:normal}
-  .ttr-sub{flex-wrap:wrap;gap:5px;margin-top:5px}
+  .ttr-name{
+    font-size:.88rem;font-weight:600;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    margin-bottom:5px;
+  }
+  /* Sous-ligne mobile : tout sur une ligne, pas de retour */
+  .ttr-sub{
+    display:flex;align-items:center;
+    gap:5px;flex-wrap:nowrap;overflow:hidden;
+  }
+  .ttr-proj{
+    flex-shrink:1;min-width:0;max-width:120px;
+  }
+  .ttr-proj-name{
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    max-width:80px;
+  }
+  /* Deadline inline dans la sous-ligne sur mobile */
+  .ttr-dl-inline{
+    display:inline-flex;align-items:center;gap:3px;
+    font-size:.7rem;font-weight:600;white-space:nowrap;flex-shrink:0;
+  }
+  .ttr-dl-inline svg{width:10px;height:10px;stroke:currentColor;stroke-width:2;fill:none}
+  .ttr-dl-inline.overdue{color:var(--rose)}
+  .ttr-dl-inline.soon{color:var(--amber)}
+  .ttr-dl-inline.normal{color:var(--ink3)}
+  /* Avatar inline visible sur mobile */
+  .ttr-av-inline{display:inline-flex}
+  /* Colonnes desktop cachées sur mobile */
   .ttr-assignee{display:none}
   .ttr-priority{display:none}
-  .ttr-deadline{
-    grid-column:4/5;font-size:.7rem;font-weight:600;
-    text-align:right;align-self:flex-start;margin-top:3px;
-  }
+  .ttr-deadline{display:none}
   .ttr-actions{display:none}
+
+  /* ── Filtres mobile : recherche ligne 1, selects ligne 2 compacte ── */
+  .toolbar{padding:8px 10px;gap:5px;flex-wrap:wrap}
+  .sbox{flex:1 1 100%;order:-1;min-width:0}
+  .toolbar-selects{
+    display:flex;gap:5px;width:100%;
+    order:1;
+  }
+  .toolbar-selects .fsel{
+    flex:1;min-width:0;
+    font-size:.73rem;
+    padding:7px 18px 7px 7px;
+    background-position:right 5px center;
+  }
+  /* Les selects directs dans toolbar (pas dans toolbar-selects) */
+  .toolbar > .fsel{
+    flex:1;min-width:0;
+    font-size:.73rem;
+    padding:7px 18px 7px 7px;
+    background-position:right 5px center;
+  }
 
   .modal{max-height:96vh;width:100%;border-radius:var(--r-xl) var(--r-xl) 0 0;margin-bottom:0;align-self:flex-end}
   .overlay{padding:0;align-items:flex-end}
@@ -656,6 +701,13 @@ html,body{overflow-x:hidden;max-width:100vw}
   font-size:.72rem;color:var(--ink3);
 }
 .ttr-comments-count svg{width:12px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
+/* Avatar inline dans sub-ligne (visible mobile uniquement, caché desktop) */
+.ttr-av-inline{
+  display:none;width:18px;height:18px;border-radius:50%;flex-shrink:0;
+  align-items:center;justify-content:center;
+  color:white;font-weight:700;font-size:.58rem;
+  border:1.5px solid var(--white);box-shadow:0 0 0 1px var(--border);
+}
 </style>
 </head>
 <body>
@@ -811,24 +863,26 @@ html,body{overflow-x:hidden;max-width:100vw}
         <div class="toolbar">
           <div class="sbox">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input id="dash-search" class="sinp" placeholder="Rechercher une tâche..." oninput="renderDashboard()">
+            <input id="dash-search" class="sinp" placeholder="Rechercher..." oninput="renderDashboard()">
           </div>
-          <select id="dash-status" class="fsel" onchange="renderDashboard()">
-            <option value="">Tous statuts</option>
-            <option value="todo">À faire</option>
-            <option value="progress">En cours</option>
-            <option value="review">À valider</option>
-            <option value="done">Terminée</option>
-          </select>
-          <select id="dash-priority" class="fsel" onchange="renderDashboard()">
-            <option value="">Toutes priorités</option>
-            <option value="high">Haute</option>
-            <option value="med">Moyenne</option>
-            <option value="low">Faible</option>
-          </select>
-          <select id="dash-project" class="fsel" onchange="renderDashboard()">
-            <option value="">Tous projets</option>
-          </select>
+          <div class="toolbar-selects">
+            <select id="dash-status" class="fsel" onchange="renderDashboard()">
+              <option value="">Statut</option>
+              <option value="todo">À faire</option>
+              <option value="progress">En cours</option>
+              <option value="review">À valider</option>
+              <option value="done">Terminée</option>
+            </select>
+            <select id="dash-priority" class="fsel" onchange="renderDashboard()">
+              <option value="">Priorité</option>
+              <option value="high">Haute</option>
+              <option value="med">Moyenne</option>
+              <option value="low">Faible</option>
+            </select>
+            <select id="dash-project" class="fsel" onchange="renderDashboard()">
+              <option value="">Projet</option>
+            </select>
+          </div>
         </div>
         <div class="tasks-th">
           <div></div>
@@ -894,16 +948,18 @@ html,body{overflow-x:hidden;max-width:100vw}
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             <input id="project-search" class="sinp" placeholder="Rechercher..." oninput="renderProjectDetail()">
           </div>
-          <select id="project-status-filter" class="fsel" onchange="renderProjectDetail()">
-            <option value="">Tous statuts</option>
-            <option value="todo">À faire</option>
-            <option value="progress">En cours</option>
-            <option value="review">À valider</option>
-            <option value="done">Terminée</option>
-          </select>
-          <select id="project-assignee-filter" class="fsel" onchange="renderProjectDetail()">
-            <option value="">Tous responsables</option>
-          </select>
+          <div class="toolbar-selects">
+            <select id="project-status-filter" class="fsel" onchange="renderProjectDetail()">
+              <option value="">Statut</option>
+              <option value="todo">À faire</option>
+              <option value="progress">En cours</option>
+              <option value="review">À valider</option>
+              <option value="done">Terminée</option>
+            </select>
+            <select id="project-assignee-filter" class="fsel" onchange="renderProjectDetail()">
+              <option value="">Responsable</option>
+            </select>
+          </div>
         </div>
         <div class="tasks-th">
           <div></div>
@@ -938,19 +994,21 @@ html,body{overflow-x:hidden;max-width:100vw}
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             <input id="all-search" class="sinp" placeholder="Rechercher..." oninput="renderAllTasks()">
           </div>
-          <select id="all-project" class="fsel" onchange="renderAllTasks()">
-            <option value="">Tous projets</option>
-          </select>
-          <select id="all-status" class="fsel" onchange="renderAllTasks()">
-            <option value="">Tous statuts</option>
-            <option value="todo">À faire</option>
-            <option value="progress">En cours</option>
-            <option value="review">À valider</option>
-            <option value="done">Terminée</option>
-          </select>
-          <select id="all-assignee" class="fsel" onchange="renderAllTasks()">
-            <option value="">Tous responsables</option>
-          </select>
+          <div class="toolbar-selects">
+            <select id="all-project" class="fsel" onchange="renderAllTasks()">
+              <option value="">Projet</option>
+            </select>
+            <select id="all-status" class="fsel" onchange="renderAllTasks()">
+              <option value="">Statut</option>
+              <option value="todo">À faire</option>
+              <option value="progress">En cours</option>
+              <option value="review">À valider</option>
+              <option value="done">Terminée</option>
+            </select>
+            <select id="all-assignee" class="fsel" onchange="renderAllTasks()">
+              <option value="">Responsable</option>
+            </select>
+          </div>
         </div>
         <div class="tasks-th">
           <div></div>
@@ -1979,6 +2037,15 @@ function renderTaskTr(t) {
   const proj = projects.find(p => p.id === t.projectId);
   const projColor = proj?.color || 'var(--ink4)';
   const dlClass = deadlineClass(t.deadline, t.status);
+
+  // Deadline inline pour mobile (dans ttr-sub)
+  const dlInline = t.deadline ? `<span class="ttr-dl-inline ${dlClass}">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    ${deadlineLabel(t.deadline)}
+  </span>` : '';
+
+  // Petit avatar assigné dans la sous-ligne (mobile uniquement)
+  const avInline = a ? `<span class="ttr-av-inline" style="background:${a.color}" title="${escapeHtml(a.name)}">${userInitials(a)}</span>` : '';
   const commentsCount = (t.comments || []).length;
 
   // Cellule responsable
@@ -2010,6 +2077,8 @@ function renderTaskTr(t) {
       <div class="ttr-sub">
         ${projCell}
         <span class="badge ${statusClass(t.status)}">${statusLabel(t.status)}</span>
+        ${avInline}
+        ${dlInline}
       </div>
     </div>
     ${assigneeCell}
@@ -2091,7 +2160,7 @@ function openProjectDetail(pid) {
   document.getElementById('project-edit-btn').classList.toggle('hidden', !canEdit || p.personal);
   // Filter assignees dropdown
   const asEl = document.getElementById('project-assignee-filter');
-  asEl.innerHTML = '<option value="">Tous responsables</option>' +
+  asEl.innerHTML = '<option value="">Responsable</option>' +
     p.members.map(mid => {
       const u = userById(mid);
       return u ? `<option value="${u.id}">${escapeHtml(u.name)}</option>` : '';
@@ -2163,13 +2232,13 @@ function renderAllTasks() {
   // Populate filters
   const projEl = document.getElementById('all-project');
   const curProjVal = projEl.value;
-  projEl.innerHTML = '<option value="">Tous projets</option>' +
+  projEl.innerHTML = '<option value="">Projet</option>' +
     visibleProjects().map(p => `<option value="${p.id}" ${curProjVal===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('');
   const asEl = document.getElementById('all-assignee');
   const curAsVal = asEl.value;
   const memSet = new Set();
   visibleProjects().forEach(p => p.members.forEach(m => memSet.add(m)));
-  asEl.innerHTML = '<option value="">Tous responsables</option>' +
+  asEl.innerHTML = '<option value="">Responsable</option>' +
     [...memSet].map(mid => {
       const u = userById(mid);
       return u ? `<option value="${u.id}" ${curAsVal===u.id?'selected':''}>${escapeHtml(u.name)}</option>` : '';
