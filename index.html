@@ -473,91 +473,43 @@ html,body{overflow-x:hidden;max-width:100vw}
   .task-name{font-size:.9rem}
   .task-meta{gap:6px;font-size:.71rem}
 
-  /* ── Tâches mobile : 3 lignes nettes, infos parfaitement séparées ── */
+  /* ── Tâches mobile : ultra-simple, titre puis infos qui wrappent ── */
   .tasks-th{display:none}
   .task-tr{
-    display:grid;
-    grid-template-columns:5px 24px 1fr;
-    gap:0 12px;
-    padding:14px 14px;
+    display:flex;
     align-items:flex-start;
+    gap:10px;
+    padding:14px;
   }
   .ttr-color{
-    width:5px;border-radius:99px;
-    align-self:stretch;min-height:60px;height:auto;
+    width:4px;border-radius:99px;flex-shrink:0;
+    align-self:stretch;min-height:48px;
   }
   .ttr-check{
     width:24px;height:24px;flex-shrink:0;
-    align-self:flex-start;margin-top:2px;
+    margin-top:2px;
   }
   .ttr-main{
-    grid-column:3/4;min-width:0;
-    display:flex;flex-direction:column;gap:8px;
-    text-align:left;
-    align-items:stretch;
+    flex:1;min-width:0;
   }
-
-  /* Ligne 1 : titre complet */
   .ttr-name{
     font-size:.95rem;font-weight:600;color:var(--ink);
-    white-space:normal;
-    line-height:1.3;
-    margin:0;
-    overflow:visible;
-    text-overflow:clip;
+    line-height:1.35;
+    margin-bottom:8px;
     word-break:break-word;
   }
-
-  /* Ligne 2 + 3 : conteneur des sous-infos (réinitialisé) */
   .ttr-sub{
-    display:flex;flex-direction:column;
-    gap:6px;
-    align-items:stretch;
-    justify-content:flex-start;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 8px;
+    align-items:center;
   }
-
-  /* Ligne 2 : projet + statut */
-  .ttr-row-1{
-    display:flex;align-items:center;
-    justify-content:flex-start;
-    gap:6px;flex-wrap:wrap;
-    min-width:0;
-    width:100%;
-  }
-  /* Ligne 3 : responsable + priorité + deadline */
-  .ttr-row-2{
-    display:flex;align-items:center;
-    justify-content:flex-start;
-    gap:8px;flex-wrap:wrap;
-    min-width:0;
-    width:100%;
-  }
-  /* Sur mobile, les éléments de row-2 sont visibles */
-  .ttr-row-2 .ttr-pri-inline,
-  .ttr-row-2 .ttr-av-pill,
-  .ttr-row-2 .ttr-dl-inline{display:inline-flex}
-
-  /* Projet chip : pas de troncature */
-  .ttr-proj{flex-shrink:1;min-width:0;max-width:none}
+  /* Projet chip */
+  .ttr-proj{flex-shrink:0}
   .ttr-proj-name{
-    white-space:nowrap;
-    overflow:hidden;text-overflow:ellipsis;
-    max-width:160px;
+    max-width:140px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
-
-  /* Pill responsable : avatar + prénom */
-  .ttr-av-pill{
-    display:inline-flex;align-items:center;gap:5px;
-    font-size:.74rem;color:var(--ink2);font-weight:500;
-    white-space:nowrap;flex-shrink:0;
-  }
-  .ttr-av-inline{
-    display:inline-flex;width:18px;height:18px;border-radius:50%;flex-shrink:0;
-    align-items:center;justify-content:center;
-    color:white;font-weight:700;font-size:.6rem;
-    line-height:1;
-  }
-
   /* Deadline */
   .ttr-dl-inline{
     display:inline-flex;align-items:center;gap:3px;
@@ -567,11 +519,20 @@ html,body{overflow-x:hidden;max-width:100vw}
   .ttr-dl-inline.overdue{color:var(--rose)}
   .ttr-dl-inline.soon{color:var(--amber)}
   .ttr-dl-inline.normal{color:var(--ink3)}
-
-  /* Priorité inline activée mobile */
+  /* Pill responsable : avatar + prénom */
+  .ttr-av-pill{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:.74rem;color:var(--ink2);font-weight:500;
+    white-space:nowrap;flex-shrink:0;
+  }
+  .ttr-av-inline{
+    display:inline-flex;width:18px;height:18px;border-radius:50%;flex-shrink:0;
+    align-items:center;justify-content:center;
+    color:white;font-weight:700;font-size:.6rem;line-height:1;
+  }
+  /* Priorité inline */
   .ttr-pri-inline{display:inline-flex}
-
-  /* Colonnes desktop cachées sur mobile */
+  /* Colonnes desktop cachées */
   .ttr-assignee,.ttr-priority,.ttr-deadline,.ttr-actions{display:none}
 
   /* ── Filtres mobile : recherche ligne 1, selects ligne 2 compacte ── */
@@ -707,14 +668,9 @@ html,body{overflow-x:hidden;max-width:100vw}
     font-size:.72rem;color:var(--ink3);
     flex-wrap:wrap;
   }
-  /* Sur desktop : ttr-row-1 et ttr-row-2 sont juste des wrappers inline */
-  .ttr-row-1,.ttr-row-2{
-    display:inline-flex;align-items:center;gap:7px;
-    flex-wrap:wrap;
-  }
-  .ttr-row-2 .ttr-pri-inline,
-  .ttr-row-2 .ttr-av-pill,
-  .ttr-row-2 .ttr-dl-inline{display:none}
+  /* Sur desktop : on cache la priorité inline, l'avatar inline et la deadline inline
+     (ces éléments sont uniquement pour mobile, le desktop a ses propres colonnes) */
+  .ttr-pri-inline,.ttr-av-pill,.ttr-av-inline,.ttr-dl-inline{display:none}
 }
 .ttr-proj{
   display:inline-flex;align-items:center;gap:5px;
@@ -763,21 +719,10 @@ html,body{overflow-x:hidden;max-width:100vw}
   font-size:.72rem;color:var(--ink3);
 }
 .ttr-comments-count svg{width:12px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
-/* Avatar inline dans sub-ligne (visible mobile uniquement, caché desktop) */
-.ttr-av-inline{
-  display:none;width:16px;height:16px;border-radius:50%;flex-shrink:0;
-  align-items:center;justify-content:center;
-  color:white;font-weight:700;font-size:.55rem;
-  vertical-align:middle;
-  line-height:1;
-}
-.ttr-av-pill{
-  display:none;align-items:center;gap:5px;
-  font-size:.72rem;color:var(--ink2);font-weight:500;
-  white-space:nowrap;flex-shrink:0;
-}
-/* Priorité inline (mobile uniquement) */
-.ttr-pri-inline{display:none}
+/* Note : .ttr-av-inline, .ttr-av-pill, .ttr-pri-inline et .ttr-dl-inline
+   sont stylés uniquement dans le bloc mobile @media(max-width:768px)
+   et le bloc desktop @media(min-width:769px) — pas de règle globale
+   pour éviter les conflits de cascade. */
 </style>
 </head>
 <body>
@@ -2145,15 +2090,11 @@ function renderTaskTr(t) {
     <div class="ttr-main">
       <div class="ttr-name">${escapeHtml(t.name)}</div>
       <div class="ttr-sub">
-        <div class="ttr-row-1">
-          ${projCell}
-          <span class="badge ${statusClass(t.status)}">${statusLabel(t.status)}</span>
-        </div>
-        <div class="ttr-row-2">
-          ${avInline}
-          ${priInline}
-          ${dlInline}
-        </div>
+        ${projCell}
+        <span class="badge ${statusClass(t.status)}">${statusLabel(t.status)}</span>
+        ${priInline}
+        ${avInline}
+        ${dlInline}
       </div>
     </div>
     ${assigneeCell}
