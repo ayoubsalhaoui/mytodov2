@@ -496,7 +496,14 @@ html,body{overflow-x:hidden;max-width:100vw}
   .ttr-check{
     width:24px;height:24px;flex:0 0 24px;
     margin-top:2px;
+    border-radius:6px;border:1.8px solid var(--border2);
+    background:var(--white);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
   }
+  .ttr-check.checked{background:var(--green);border-color:var(--green)}
+  .ttr-check svg{width:0;height:0}
+  .ttr-check.checked svg{width:14px;height:14px;stroke:white;stroke-width:3;fill:none;flex-shrink:0}
   .ttr-main{
     flex:1 1 auto;
     min-width:0;          /* indispensable pour autoriser le shrink */
@@ -527,18 +534,36 @@ html,body{overflow-x:hidden;max-width:100vw}
     flex:0 1 auto;
     max-width:100%;
   }
-  /* Projet chip */
+  /* Projet chip (mobile) — pill avec icône colorée + nom */
   .ttr-proj{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:2px 8px 2px 4px;border-radius:99px;
+    font-size:.7rem;font-weight:600;
+    background:var(--bg);border:1px solid var(--border);
     flex:0 1 auto;
     min-width:0;
     max-width:100%;
     overflow:hidden;
   }
+  .ttr-proj-dot{
+    width:14px;height:14px;border-radius:4px;
+    flex:0 0 14px;
+    display:inline-flex;align-items:center;justify-content:center;
+    color:white;
+  }
+  .ttr-proj-dot svg{
+    width:9px;height:9px;
+    stroke:currentColor;stroke-width:2.5;fill:none;
+    flex-shrink:0;
+  }
   .ttr-proj-name{
+    color:var(--ink2);
     max-width:100%;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
     min-width:0;
   }
+  /* Garde-fou global : tout SVG dans une task card mobile reste petit */
+  .task-tr svg{max-width:100%;height:auto}
   /* Deadline */
   .ttr-dl-inline{
     display:inline-flex;align-items:center;gap:3px;
